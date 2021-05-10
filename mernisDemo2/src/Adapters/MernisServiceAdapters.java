@@ -1,0 +1,36 @@
+package Adapters;
+
+import java.rmi.RemoteException;
+
+import abstracts.CustomerCheckService;
+import entities.Customer;
+import tr.gov.nvi.tckimlik.WS.KPSPublicLocator;
+import tr.gov.nvi.tckimlik.WS.KPSPublicSoapProxy;
+
+public class MernisServiceAdapters implements CustomerCheckService{
+
+	@Override
+	public boolean checkIfRealPerson(Customer customer) {
+		
+		KPSPublicSoapProxy client= new KPSPublicSoapProxy();
+		
+		boolean result= false;
+		
+		try {
+			result=client.TCKimlikNoDogrula
+					(Long.parseLong(customer.getNationalityId()),
+					customer.getFirstName().toUpperCase(), 
+					customer.getLastName().toUpperCase(), 
+					customer.getDateOfBirth());
+		}
+		catch (RemoteException e) {
+			result=false;
+			System.out.println("Error Client");
+			e.printStackTrace();
+		}
+		
+		System.out.println(result);
+		return result;
+	}
+
+}
